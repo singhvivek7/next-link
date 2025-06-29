@@ -1,0 +1,105 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+  SUPER_ADMIN
+}
+
+model User {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  email      String   @unique
+  password   String
+  name       String
+  role       Role     @default(USER)
+  username   String?  @unique
+  avatar     String?
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  // Relations
+  urls Url[]
+
+  @@map("users")
+}
+
+model Url {
+  id           String    @id @default(auto()) @map("_id") @db.ObjectId
+  original_url String
+  short_url    String    @unique
+  title        String?
+  description  String?
+  favicon      String?
+  is_active    Boolean   @default(true)
+  expires_at   DateTime?
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @updatedAt
+
+  // User relation (optional - for anonymous URLs)
+  user_id String? @db.ObjectId
+  user    User?   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  // Relations
+  clicks Click[]
+
+  // Indexes for better performance
+  @@index([user_id])
+  @@index([created_at])
+  @@map("urls")
+}
+
+model Click {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  created_at DateTime @default(now())
+
+  // URL relation
+  url_id String @db.ObjectId
+  url    Url    @relation(fields: [url_id], references: [id], onDelete: Cascade)
+
+  // Analytics data
+  ip_address String?
+  user_agent String?
+  referer    String?
+  country    String?
+  city       String?
+  device     String?
+  browser    String?
+  os         String?
+
+  // Indexes for analytics queries
+  @@index([url_id])
+  @@index([created_at])
+  @@index([country])
+  @@map("clicks")
+}
+
+model Analytics {
+  id     String   @id @default(auto()) @map("_id") @db.ObjectId
+  url_id String   @db.ObjectId
+  date   DateTime
+  clicks Int      @default(0)
+
+  // Aggregated analytics data
+  countries Json? // {"US": 10, "UK": 5, ...}
+  devices   Json? // {"mobile": 8, "desktop": 7, ...}
+  browsers  Json? // {"chrome": 10, "firefox": 5, ...}
+  referers  Json? // {"google.com": 5, "twitter.com": 3, ...}
+
+  @@unique([url_id, date])
+  @@index([url_id])
+  @@index([date])
+  @@map("analytics")
+}

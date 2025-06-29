@@ -57,3 +57,4 @@ coverage/
 # Optional: if you have specific temporary files
 # *.tmp
 # temp/
+.env
