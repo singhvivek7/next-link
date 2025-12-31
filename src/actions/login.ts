@@ -1,9 +1,9 @@
 "use server";
 
 import { AUTH_COOKIE_NAME } from "@/app/constant/auth.constant";
-import { setCookie } from "@/lib/auth";
-import { axiosInstance } from "@/lib/request";
-import { LoginSchema } from "@/lib/validation";
+import { setCookie } from "@/lib/helper/auth";
+import { axiosInstance } from "@/lib/helper/request";
+import { LoginSchema } from "@/lib/helper/validation";
 
 export const handleLogin = async (loginForm: LoginSchema) => {
   try {

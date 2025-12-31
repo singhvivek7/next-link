@@ -25,7 +25,7 @@ model User {
   password   String
   name       String
   role       Role     @default(USER)
-  username   String?  @unique
+  username   String  @unique @default(cuid()) // random string 8 char
   avatar     String?
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt

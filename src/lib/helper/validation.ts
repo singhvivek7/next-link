@@ -36,9 +36,6 @@ export const shortUrlSchema = z.object({
     .string()
     .min(1, {
       message: "URL is required",
-    })
-    .url({
-      message: "Invalid URL",
     }),
 });
 

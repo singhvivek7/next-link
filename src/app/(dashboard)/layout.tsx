@@ -1,17 +1,28 @@
-import { useAuth } from "@/lib/auth";
+"use client";
+
+import { useAuth } from "@/lib/helper/auth";
 import { redirect } from "next/navigation";
 import ThemeProvider from "@/providers/theme-provider";
+import { useLayoutEffect, useState } from "react";
+import { DashboardSidebar } from "@/components/dashboard/sidebar";
+import { DashboardHeader } from "@/components/dashboard/header";
 
-export default async function DashboardLayout({
+export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { isAuthenticated } = await useAuth();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  if (!isAuthenticated) {
-    return redirect("/register");
-  }
+  useLayoutEffect(() => {
+    (async function () {
+      const { isAuthenticated } = await useAuth();
+      if (!isAuthenticated) {
+        return redirect("/register");
+      }
+    })();
+  }, []);
+
   return (
     <ThemeProvider
       attribute="class"
@@ -19,7 +30,32 @@ export default async function DashboardLayout({
       enableSystem
       disableTransitionOnChange
     >
-      {children}
+      <div className="min-h-screen bg-gray-50/50">
+        {/* Mobile sidebar backdrop */}
+        {sidebarOpen && (
+          <div
+            className="fixed inset-0 z-40 bg-gray-900/50 lg:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+
+        {/* Sidebar */}
+        <DashboardSidebar
+          isOpen={sidebarOpen}
+          onClose={() => setSidebarOpen(false)}
+        />
+
+        {/* Main content */}
+        <div className="lg:pl-64">
+          {/* Header */}
+          <DashboardHeader onMenuClick={() => setSidebarOpen(true)} />
+
+          {/* Page content */}
+          <main className="flex-1 p-4 lg:p-8">
+            <div className="mx-auto max-w-7xl">{children}</div>
+          </main>
+        </div>
+      </div>
     </ThemeProvider>
   );
 }

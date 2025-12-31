@@ -92,3 +92,10 @@ export async function generateUniqueShortUrl(
     `Failed to generate unique URL after ${maxAttempts} attempts. Consider increasing length.`
   );
 }
+
+export const generateRedirectLink = (url: string) => {
+  if (!url.startsWith("http://") && !url.startsWith("https://")) {
+    return "https://" + url;
+  }
+  return url;
+};

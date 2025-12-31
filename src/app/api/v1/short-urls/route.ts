@@ -1,9 +1,9 @@
 import { AUTH_COOKIE_NAME } from "@/app/constant/auth.constant";
-import { asyncHandler, throwBadRequest } from "@/lib/async-handler";
-import client from "@/lib/db";
-import { verifyJwt } from "@/lib/jwt";
-import { generateUniqueShortUrl } from "@/lib/short-url";
-import { shortUrlSchema } from "@/lib/validation";
+import { asyncHandler, throwBadRequest } from "@/lib/helper/async-handler";
+import client from "@/lib/helper/db";
+import { verifyJwt } from "@/lib/helper/jwt";
+import { generateUniqueShortUrl } from "@/lib/helper/short-url";
+import { shortUrlSchema } from "@/lib/helper/validation";
 import { NextRequest, NextResponse } from "next/server";
 
 const isUrlExists = async (url: string) => {

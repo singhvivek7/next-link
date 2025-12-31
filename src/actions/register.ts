@@ -1,7 +1,7 @@
 "use server";
 
-import { axiosInstance } from "@/lib/request";
-import { RegisterSchema } from "@/lib/validation";
+import { axiosInstance } from "@/lib/helper/request";
+import { RegisterSchema } from "@/lib/helper/validation";
 
 export const handleRegister = async (registerForm: RegisterSchema) => {
   try {

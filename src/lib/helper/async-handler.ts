@@ -144,3 +144,7 @@ export const throwInternalError = (
 ) => {
   throw new ApiError(500, message);
 };
+
+export const throwError = (status: number = 500, message: string = "Internal server error") => {
+  throw new ApiError(status, message);
+};

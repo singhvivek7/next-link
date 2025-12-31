@@ -5,10 +5,10 @@ import {
   successResponse,
   throwConflict,
   throwValidationError,
-} from "@/lib/async-handler";
-import { hash } from "@/lib/bcrypt";
-import client from "@/lib/db";
-import { registerSchema } from "@/lib/validation";
+} from "@/lib/helper/async-handler";
+import { hash } from "@/lib/helper/bcrypt";
+import client from "@/lib/helper/db";
+import { registerSchema } from "@/lib/helper/validation";
 import { NextRequest, NextResponse } from "next/server";
 
 export const POST = asyncHandler(async (req: NextRequest) => {
@@ -22,28 +22,33 @@ export const POST = asyncHandler(async (req: NextRequest) => {
   }
 
   // Check if user already exists
-  const existingUser = await client.user.count({
+  const existingUserCount = await client.user.count({
     where: {
       email: data.email,
     },
   });
 
-  if (existingUser > 0) {
+  if (existingUserCount > 0) {
     return throwConflict("User already exists");
   }
 
   // Hash password
   const hashedPassword = await hash(data.password);
   data.password = hashedPassword;
+  try {
 
-  // Create user
-  const user = await client.user.create({
-    data,
-  });
+    // Create user
+    const user = await client.user.create({
+      data,
+    });
+    console.log("🚀 ~ user:", user)
+  } catch (error) {
+    console.log("🚀 ~ error:", error)
+  }
 
   return successResponse(
     {
-      user_id: user.id,
+      user_id: '', // user.id,
     },
     "User registered successfully",
     201

@@ -1,7 +1,7 @@
 // app/api/v1/short-urls/[url]/route.ts
 
-import { asyncHandler, throwBadRequest } from "@/lib/async-handler";
-import client from "@/lib/db";
+import { asyncHandler, throwBadRequest, throwError } from "@/lib/helper/async-handler";
+import client from "@/lib/helper/db";
 import { NextRequest, NextResponse } from "next/server";
 
 type ContextType = {
@@ -19,11 +19,12 @@ export const GET = async (req: NextRequest, { params }: ContextType) => {
     const shortUrl = await client.url.findFirst({
       where: {
         short_url: url,
+        is_active: true,
       },
     });
 
     if (!shortUrl) {
-      return throwBadRequest("Short url not found");
+      throw throwBadRequest("Short url not found or disabled");
     }
 
     return NextResponse.json({
@@ -34,7 +35,7 @@ export const GET = async (req: NextRequest, { params }: ContextType) => {
         original_url: shortUrl.original_url,
       },
     });
-  } catch (err) {
-    throw throwBadRequest("Short url not found");
+  } catch (err: any) {
+    throw throwError(err.status, err.message);
   }
 };

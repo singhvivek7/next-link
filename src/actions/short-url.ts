@@ -1,7 +1,7 @@
 "use server";
 
-import { axiosInstance } from "@/lib/request";
-import { ShortUrlSchema } from "@/lib/validation";
+import { axiosInstance } from "@/lib/helper/request";
+import { ShortUrlSchema } from "@/lib/helper/validation";
 
 export const handleShortUrl = async (urlForm: ShortUrlSchema) => {
   try {

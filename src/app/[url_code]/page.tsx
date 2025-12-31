@@ -1,6 +1,6 @@
 import { handleGetShortUrl } from "@/actions/short-url";
-import { axiosInstance } from "@/lib/request";
-import { redirect } from "next/navigation";
+import { generateRedirectLink } from "@/lib/helper/short-url";
+import { redirect, RedirectType } from "next/navigation";
 
 export default async function GetUrlPage({
   params,
@@ -8,12 +8,16 @@ export default async function GetUrlPage({
   params: Promise<{ url_code: string }>;
 }) {
   const { url_code } = await params;
-  console.log("🚀 ~ url_code:", url_code);
+  let redirectLink = "/";
 
   if (url_code) {
-    const { data } = await handleGetShortUrl(url_code);
-    return redirect(data.original_url);
+    try {
+      const { data } = await handleGetShortUrl(url_code);
+      redirectLink = generateRedirectLink(data.original_url);
+    } catch (err: any) {
+      console.log("Error fetching short url", err);
+    }
   }
 
-  return <h1>Fetching...</h1>;
+  return redirect(redirectLink, RedirectType.replace);
 }
