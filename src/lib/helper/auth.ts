@@ -1,8 +1,9 @@
 "use server";
 
-import { AUTH_COOKIE_NAME } from "@/app/constant/auth.constant";
-import { cookies } from "next/headers";
 import { decode } from "jsonwebtoken";
+import { cookies } from "next/headers";
+
+import { AUTH_COOKIE_NAME } from "@/app/constant/auth.constant";
 import { IJwtPayload } from "@/app/types/auth.type";
 
 export const setCookie = async (key: string, value: string) => {
@@ -36,7 +37,7 @@ export const useAuth = async () => {
       isAuthenticated: true,
       tokenData,
     };
-  } catch (_) {
+  } catch {
     return {
       isAuthenticated: false,
     };

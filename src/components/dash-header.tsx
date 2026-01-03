@@ -1,10 +1,11 @@
-import Link from "next/link";
-import { Button } from "./ui/button";
-import { handleLogout } from "@/actions/logout";
-import ThemeSelection from "./theme-selection";
-
-import { siteConfig } from "@/config/site";
 import Image from "next/image";
+import Link from "next/link";
+
+import { handleLogout } from "@/actions/logout";
+import { siteConfig } from "@/config/site";
+
+import ThemeSelection from "./theme-selection";
+import { Button } from "./ui/button";
 
 
 

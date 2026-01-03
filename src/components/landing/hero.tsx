@@ -1,10 +1,11 @@
 "use client";
 
 import { motion } from "motion/react";
-import { Copy, Check, ArrowRight, Link as LinkIcon, Activity } from "lucide-react";
-import { UrlShortener } from "./url-shortener";
+
 import { siteConfig } from "@/config/site";
+
 import { RotatingText } from "./rotating-text";
+import { UrlShortener } from "./url-shortener";
 
 // ... inside Hero component ...
 

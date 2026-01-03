@@ -1,9 +1,9 @@
 "use client";
 
-import { motion } from "motion/react";
 import { ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { motion } from "motion/react";
 
+import { Button } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
 
 export const CTA = () => {

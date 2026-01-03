@@ -1,8 +1,9 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
+
+import { ColorPalette, colorPalettes, defaultPalette, themes } from "@/config/color-palettes";
 import { siteConfig } from "@/config/site";
-import { colorPalettes, ColorPalette, defaultPalette, themes } from "@/config/color-palettes";
 
 type ThemeMode = 'light' | 'dark';
 
@@ -26,7 +27,6 @@ export function useThemeColor() {
 export function ConfigStyleProvider({ children }: { children?: React.ReactNode }) {
   const [palette, setPaletteState] = useState<ColorPalette>(defaultPalette);
   const [mode, setModeState] = useState<ThemeMode>('dark');
-  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     const savedPaletteName = localStorage.getItem("theme-palette");
@@ -46,7 +46,6 @@ export function ConfigStyleProvider({ children }: { children?: React.ReactNode }
     } else {
       document.documentElement.classList.add('dark');
     }
-    setMounted(true);
   }, []);
 
   const setPalette = (name: string) => {
@@ -67,7 +66,6 @@ export function ConfigStyleProvider({ children }: { children?: React.ReactNode }
   };
 
   if (!siteConfig.theme?.cssVars) return null;
-  const { cssVars } = siteConfig.theme;
 
   // Select base theme variables
   const baseTheme = themes[mode];

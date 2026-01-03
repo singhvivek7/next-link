@@ -1,19 +1,16 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { motion, AnimatePresence } from "motion/react";
 import {
     Copy,
-    ExternalLink,
-    Trash2,
-    Command,
-    ArrowRight,
-    Link as LinkIcon
-} from "lucide-react";
+    Link as LinkIcon,
+    Trash2} from "lucide-react";
+import { AnimatePresence,motion } from "motion/react";
+import { useCallback,useEffect, useState } from "react";
 import { toast } from "sonner";
+
+import { handleShortUrl } from "@/actions/short-url";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { handleShortUrl } from "@/actions/short-url";
 
 interface HistoryItem {
     id: string;

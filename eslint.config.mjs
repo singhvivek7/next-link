@@ -3,6 +3,7 @@ import { FlatCompat } from "@eslint/eslintrc";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
 import tseslint from "typescript-eslint";
+import simpleImportSort from "eslint-plugin-simple-import-sort";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -27,7 +28,12 @@ export default tseslint.config(
         rules: {
             // Custom rules if needed
             "@typescript-eslint/no-explicit-any": "off",
-            "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }]
+            "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
+            "simple-import-sort/imports": "error",
+            "simple-import-sort/exports": "error"
+        },
+        plugins: {
+            "simple-import-sort": simpleImportSort
         }
     }
 );

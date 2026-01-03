@@ -1,15 +1,17 @@
 // /api/v1/register
 
+import { NextRequest } from "next/server";
+
 import {
   asyncHandler,
   successResponse,
   throwConflict,
+  throwError,
   throwValidationError,
 } from "@/lib/helper/async-handler";
 import { hash } from "@/lib/helper/bcrypt";
 import client from "@/lib/helper/db";
 import { registerSchema } from "@/lib/helper/validation";
-import { NextRequest, NextResponse } from "next/server";
 
 export const POST = asyncHandler(async (req: NextRequest) => {
   const body = await req.json();
@@ -41,16 +43,14 @@ export const POST = asyncHandler(async (req: NextRequest) => {
     const user = await client.user.create({
       data,
     });
-    console.log("🚀 ~ user:", user)
-  } catch (error) {
-    console.log("🚀 ~ error:", error)
+    return successResponse(
+      {
+        user_id: user.id,
+      },
+      "User registered successfully",
+      201
+    );
+  } catch (err: any) {
+    return throwError(err.status, err.message);
   }
-
-  return successResponse(
-    {
-      user_id: '', // user.id,
-    },
-    "User registered successfully",
-    201
-  );
 });

@@ -1,14 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
-import { Link2, Menu, X, ArrowRight, ChevronRight, Sparkles } from "lucide-react";
+import { ChevronRight, Menu, Sparkles,X } from "lucide-react";
+import { AnimatePresence,motion } from "motion/react";
 import { useRouter } from "next/navigation";
-import { siteConfig } from "@/config/site";
-import { Button } from "@/components/ui/button";
-import { ThemePicker } from "@/components/theme-picker";
-import Image from "next/image";
+import { useState } from "react";
+
 import { Logo } from "@/components/logo";
+import { ThemePicker } from "@/components/theme-picker";
+import { Button } from "@/components/ui/button";
+import { siteConfig } from "@/config/site";
 
 export const Navbar = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);

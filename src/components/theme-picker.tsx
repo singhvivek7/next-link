@@ -1,19 +1,19 @@
 "use client";
 
+import { Moon, Paintbrush, Sun } from "lucide-react";
 import * as React from "react";
-import { Paintbrush, Moon, Sun } from "lucide-react";
 
 import { useThemeColor } from "@/components/config-style-provider";
-import { colorPalettes } from "@/config/color-palettes";
 import { Button } from "@/components/ui/button";
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
-    DropdownMenuTrigger,
-    DropdownMenuSeparator,
     DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { colorPalettes } from "@/config/color-palettes";
 
 export function ThemePicker() {
     const { palette, setPalette, mode, setMode } = useThemeColor();

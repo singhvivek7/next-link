@@ -1,14 +1,14 @@
 "use client";
 
-import { motion } from "motion/react";
 import {
-    Zap,
     BarChart3,
-    Shield,
-    Palette,
     Code2,
     Globe,
+    Palette,
+    Shield,
+    Zap,
 } from "lucide-react";
+import { motion } from "motion/react";
 
 const features = [
     {

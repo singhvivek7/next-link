@@ -1,7 +1,8 @@
 "use client"
 
-import { useThemeColor } from "@/components/config-style-provider"
 import { Toaster as Sonner, ToasterProps } from "sonner"
+
+import { useThemeColor } from "@/components/config-style-provider"
 
 const Toaster = ({ ...props }: ToasterProps) => {
   const { mode } = useThemeColor()

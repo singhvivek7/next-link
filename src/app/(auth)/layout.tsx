@@ -1,5 +1,6 @@
-import { useAuth } from "@/lib/helper/auth";
 import { redirect } from "next/navigation";
+
+import { useAuth } from "@/lib/helper/auth";
 
 export default async function AuthLayout({
   children,

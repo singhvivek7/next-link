@@ -1,9 +1,9 @@
-import { fontPrimary, fontSecondary } from "@/utils/fonts";
-import meta from "@/utils/meta";
-import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
 import { ConfigStyleProvider } from "@/components/config-style-provider";
+import { Toaster } from "@/components/ui/sonner";
+import { fontPrimary, fontSecondary } from "@/utils/fonts";
+import meta from "@/utils/meta";
 
 export const metadata = meta.homepage;
 
