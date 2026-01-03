@@ -1,25 +1,25 @@
 "use client";
 
-import React, { useState } from "react";
-import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
+  ArrowRight,
   Eye,
   EyeOff,
-  Mail,
-  Lock,
-  User,
-  ArrowRight,
   Loader2,
+  Lock,
+  Mail,
+  User,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import React, { useState } from "react";
+import { Controller,useForm } from "react-hook-form";
+import { toast } from "sonner";
+
+import { handleRegister } from "@/actions/register";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
-import { registerSchema, RegisterSchema } from "@/lib/helper/validation";
-import { handleRegister } from "@/actions/register";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
+import { RegisterSchema,registerSchema } from "@/lib/helper/validation";
 
 export default function SignUpPage() {
   const [showPassword, setShowPassword] = useState(false);

@@ -1,19 +1,18 @@
 // /api/v1/login
 
-import { AUTH_COOKIE_NAME } from "@/app/constant/auth.constant";
+import { NextRequest } from "next/server";
+
 import { IJwtPayload } from "@/app/types/auth.type";
 import {
   asyncHandler,
   successResponse,
   throwBadRequest,
-  throwConflict,
   throwValidationError,
 } from "@/lib/helper/async-handler";
-import { compare, hash } from "@/lib/helper/bcrypt";
+import { compare } from "@/lib/helper/bcrypt";
 import client from "@/lib/helper/db";
 import { signJwt } from "@/lib/helper/jwt";
 import { loginSchema } from "@/lib/helper/validation";
-import { NextRequest, NextResponse } from "next/server";
 
 export const POST = asyncHandler(async (req: NextRequest) => {
   const body = await req.json();

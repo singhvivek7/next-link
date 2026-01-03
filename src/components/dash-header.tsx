@@ -1,16 +1,28 @@
+import Image from "next/image";
 import Link from "next/link";
-import { Button } from "./ui/button";
+
 import { handleLogout } from "@/actions/logout";
+import { siteConfig } from "@/config/site";
+
 import ThemeSelection from "./theme-selection";
+import { Button } from "./ui/button";
+
+
 
 export default function DashHeader() {
   return (
     <header className="bg-muted">
       <nav className="flex items-center justify-between max-w-7xl mx-auto h-16">
-        <Link href="/">
-          <h1 className="text-3xl font-bold text-primary font-secondary">
-            NextURL
-          </h1>
+        <Link href="/" className="flex items-center gap-2">
+          {siteConfig.logos.light && siteConfig.logos.dark ? (
+            <>
+              <Image src={siteConfig.logos.light} alt={siteConfig.name} width={140} height={40} className="dark:hidden block" />
+              <Image src={siteConfig.logos.dark} alt={siteConfig.name} width={140} height={40} className="hidden dark:block" />
+              <h1 className="sr-only">{siteConfig.name}</h1>
+            </>
+          ) : (
+            <h1 className="text-xl font-bold">{siteConfig.name}</h1>
+          )}
         </Link>
 
         <div className="flex items-center gap-4">
