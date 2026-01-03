@@ -1,6 +1,7 @@
+import { redirect, RedirectType } from "next/navigation";
+
 import { handleGetShortUrl } from "@/actions/short-url";
 import { generateRedirectLink } from "@/lib/helper/short-url";
-import { redirect, RedirectType } from "next/navigation";
 
 export default async function GetUrlPage({
   params,

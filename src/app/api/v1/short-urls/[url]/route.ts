@@ -1,8 +1,9 @@
 // app/api/v1/short-urls/[url]/route.ts
 
-import { asyncHandler, throwBadRequest, throwError } from "@/lib/helper/async-handler";
-import client from "@/lib/helper/db";
 import { NextRequest, NextResponse } from "next/server";
+
+import { throwBadRequest, throwError } from "@/lib/helper/async-handler";
+import client from "@/lib/helper/db";
 
 type ContextType = {
   params: Promise<{ url: string }>;

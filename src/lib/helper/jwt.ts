@@ -1,5 +1,6 @@
-import { IJwtPayload } from "@/app/types/auth.type";
 import { sign, verify } from "jsonwebtoken";
+
+import { IJwtPayload } from "@/app/types/auth.type";
 
 const secret = process.env.JWT_SECRET as string;
 

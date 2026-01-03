@@ -1,11 +1,12 @@
 "use client";
 
-import { useAuth } from "@/lib/helper/auth";
 import { redirect } from "next/navigation";
-import ThemeProvider from "@/providers/theme-provider";
 import { useLayoutEffect, useState } from "react";
-import { DashboardSidebar } from "@/components/dashboard/sidebar";
+
 import { DashboardHeader } from "@/components/dashboard/header";
+import { DashboardSidebar } from "@/components/dashboard/sidebar";
+import { useAuth } from "@/lib/helper/auth";
+import ThemeProvider from "@/providers/theme-provider";
 
 export default function DashboardLayout({
   children,
