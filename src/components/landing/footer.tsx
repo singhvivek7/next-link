@@ -1,6 +1,7 @@
 "use client";
 
 import { Logo } from "@/components/logo";
+import { siteConfig } from "@/config/site";
 
 export const Footer = () => {
     return (
@@ -33,10 +34,10 @@ export const Footer = () => {
             </div>
 
             <div className="max-w-[1400px] mx-auto px-6 mt-20 pt-8 border-t border-border flex items-center justify-between text-muted-foreground/60 text-xs">
-                <p>© 2025</p>
+                <p>© {new Date().getFullYear()}</p>
                 <div className="flex gap-4">
                     <span>System Status: Operational</span>
-                    <span>v2.4.1</span>
+                    <span>v{siteConfig.version}</span>
                 </div>
             </div>
         </footer>

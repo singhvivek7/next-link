@@ -58,8 +58,9 @@ Before you begin, ensure you have the following installed:
 
     ```env
     DATABASE_URL="mongodb+srv://<username>:<password>@cluster.mongodb.net/<dbname>"
-    NEXT_APP_BASE_URL="http://localhost:3000"
+    NEXT_PUBLIC_APP_BASE_URL="http://localhost:3000"
     JWT_SECRET="your-super-secret-key-change-this"
+    NEXT_PUBLIC_ENCRYPTION_KEY="your-super-secret-encryption-key-change-this"
     ```
 
 4.  **Database Setup**

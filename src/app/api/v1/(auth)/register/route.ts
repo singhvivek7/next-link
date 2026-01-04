@@ -41,8 +41,28 @@ export const POST = asyncHandler(async (req: NextRequest) => {
 
     // Create user
     const user = await client.user.create({
-      data,
+      data: {
+        name: data.name,
+        email: data.email,
+        password: data.password,
+      },
     });
+
+    // Link matched history URLs to the new user
+    if (body.history && Array.isArray(body.history) && body.history.length > 0) {
+      await client.url.updateMany({
+        where: {
+          short_url: {
+            in: body.history,
+          },
+          user_id: null, // Only claim anonymous URLs
+        },
+        data: {
+          user_id: user.id,
+        },
+      });
+    }
+
     return successResponse(
       {
         user_id: user.id,

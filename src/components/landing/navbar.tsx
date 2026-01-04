@@ -1,7 +1,7 @@
 "use client";
 
-import { ChevronRight, Menu, Sparkles,X } from "lucide-react";
-import { AnimatePresence,motion } from "motion/react";
+import { ChevronRight, Menu, Sparkles, X } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -55,22 +55,35 @@ export const Navbar = () => {
                 {/* Right: Actions */}
                 <div className="flex items-center gap-4">
                     <ThemePicker />
-                    <Button
+                    {/* <Button
                         variant="landing-ghost"
                         onClick={handleLogin}
                         className="hidden md:flex"
                     >
                         Log in
-                    </Button>
-                    <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                    </Button> */}
+                    <motion.div
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        className="hidden sm:block relative group"
+                    >
+                        {/* Animated gradient border */}
+                        <div className="absolute -inset-[2px] bg-gradient-to-r from-primary via-secondary to-primary bg-[length:200%_100%] rounded-none animate-gradient-x opacity-75 group-hover:opacity-100 transition-opacity" />
+
+                        {/* Sparkle effects */}
+                        <div className="absolute -inset-[2px] rounded-none overflow-hidden">
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer" />
+                        </div>
+
                         <Button
-                            variant="landing-primary"
+                            variant="default"
                             size="sm"
                             onClick={handleLogin}
-                            className="hidden sm:flex gap-2 group"
+                            className="relative flex gap-2 group/btn"
                         >
-                            <span>Get Access</span>
-                            <ChevronRight className="w-3.5 h-3.5 text-background/50 group-hover:text-background group-hover:translate-x-0.5 transition-all" />
+                            <Sparkles className="w-3.5 h-3.5 transition-colors" />
+                            <span>Start for Free</span>
+                            <ChevronRight className="w-3.5 h-3.5 group-hover/btn:translate-x-0.5 transition-all" />
                         </Button>
                     </motion.div>
                     <button

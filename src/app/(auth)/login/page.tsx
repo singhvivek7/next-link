@@ -1,59 +1,64 @@
-import Link from "next/link";
+"use client"
 
-import LoginForm from "@/components/login-form";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { motion } from "motion/react"
+import Link from "next/link"
+
+import { AuthHeader } from "@/components/auth-header"
+import LoginForm from "@/components/login-form"
 
 export default function LoginPage() {
   return (
-    <div className="min-h-[calc(100vh-4rem)] bg-gradient-to-br from-primary/70 via-secondary/10 to-accent/70 flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Animated background elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-secondary rounded-full blur-3xl animate-pulse delay-1000"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-accent/5 rounded-full blur-3xl animate-pulse delay-500"></div>
-      </div>
+    <div className="min-h-screen bg-background flex flex-col relative overflow-hidden">
+      {/* Subtle Grid Pattern */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,hsl(var(--border))_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border))_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-20" />
 
-      {/* Main content */}
-      <div className="w-full max-w-md relative z-10">
-        {/* Glass card effect */}
-        <Card className="backdrop-blur-lg bg-card/80 border-border/20 shadow-2xl transition-all duration-300 hover:shadow-3xl hover:bg-card/90">
-          <CardHeader className="text-center space-y-4">
-            <CardTitle className="text-3xl font-bold text-primary">
-              Welcome Back!
-            </CardTitle>
-            <CardDescription>Login to your account</CardDescription>
-          </CardHeader>
+      {/* Top gradient glow */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-to-b from-primary/10 via-transparent to-transparent blur-3xl" />
 
-          <CardContent className="space-y-6">
+      {/* Header */}
+      <AuthHeader />
+
+      {/* Main Content */}
+      <main className="flex-1 flex items-center justify-center p-4 relative z-10">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="w-full max-w-md"
+        >
+          {/* Title Section */}
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-foreground mb-2">
+              Welcome back
+            </h1>
+            <p className="text-muted-foreground">
+              Sign in to your account to continue
+            </p>
+          </div>
+
+          {/* Form Card */}
+          <div className="bg-card/50 backdrop-blur-sm border border-border rounded-none p-8 shadow-xl">
             <LoginForm />
-            {/* Footer */}
-            <div className="text-center pt-4">
-              <p className="text-sm text-muted-foreground">
-                Don&apos;t have an account?{" "}
-                <Button
-                  variant="link"
-                  className="p-0 h-auto text-primary hover:text-primary/80 font-medium cursor-pointer"
-                  asChild
-                >
-                  <Link
-                    href="/register"
-                    className="text-primary hover:text-primary/80"
-                  >
-                    Register now
-                  </Link>
-                </Button>
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+
+          {/* Footer Links */}
+          <div className="mt-8 text-center">
+            <p className="text-xs text-muted-foreground">
+              By signing in, you agree to our{" "}
+              <Link href="/terms" className="text-foreground hover:text-primary transition-colors underline underline-offset-4">
+                Terms of Service
+              </Link>{" "}
+              and{" "}
+              <Link href="/privacy" className="text-foreground hover:text-primary transition-colors underline underline-offset-4">
+                Privacy Policy
+              </Link>
+            </p>
+          </div>
+        </motion.div>
+      </main>
+
+      {/* Bottom accent line */}
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary to-transparent opacity-50" />
     </div>
-  );
+  )
 }

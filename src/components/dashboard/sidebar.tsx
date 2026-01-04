@@ -1,86 +1,58 @@
-"use client";
+"use client"
 
 import {
-  BarChart3,
   ChevronDown,
   ChevronRight,
-  FileText,
-  Home,
-  Link2,
-  MousePointerClick,
-  QrCode,
-  Settings,
-  Users,
+  ChevronsLeft,
+  ChevronsRight,
   X,
-} from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useState } from "react";
+  Zap,
+} from "lucide-react"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+import { useState } from "react"
 
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { Logo } from "@/components/logo"
+import { Button } from "@/components/ui/button"
+import { dashboardNav, type NavItem } from "@/config/routes"
+import { siteConfig } from "@/config/site"
+import { cn } from "@/lib/utils"
+
+import { UpgradeCard } from "./upgrade-card"
 
 interface SidebarProps {
-  isOpen: boolean;
-  onClose: () => void;
+  isOpen: boolean
+  onClose: () => void
+  collapsed?: boolean
+  onToggleCollapse?: () => void
 }
 
-interface NavigationItem {
-  name: string;
-  href: string;
-  icon: React.ComponentType<{ className?: string }>;
-  current?: boolean;
-  children?: NavigationItem[];
-}
-
-const navigation: NavigationItem[] = [
-  { name: "Dashboard", href: "/dash", icon: Home },
-  { name: "My Links", href: "/links", icon: Link2 },
-  { name: "Analytics", href: "/analytics", icon: BarChart3 },
-  { name: "QR Codes", href: "/qr-codes", icon: QrCode },
-  {
-    name: "Reports",
-    href: "/reports",
-    icon: FileText,
-    children: [
-      {
-        name: "Click Reports",
-        href: "/reports/clicks",
-        icon: MousePointerClick,
-      },
-      { name: "Traffic Reports", href: "/reports/traffic", icon: BarChart3 },
-      { name: "Geographic Reports", href: "/reports/geographic", icon: Users },
-    ],
-  },
-  { name: "Settings", href: "/settings", icon: Settings },
-];
-
-export function DashboardSidebar({ isOpen, onClose }: SidebarProps) {
-  const pathname = usePathname();
-  const [expandedItems, setExpandedItems] = useState<string[]>([]);
+export function DashboardSidebar({ isOpen, onClose, collapsed = false, onToggleCollapse }: SidebarProps) {
+  const pathname = usePathname()
+  const [expandedItems, setExpandedItems] = useState<string[]>([])
 
   const toggleExpanded = (itemName: string) => {
     setExpandedItems((prev) =>
       prev.includes(itemName)
         ? prev.filter((name) => name !== itemName)
         : [...prev, itemName]
-    );
-  };
+    )
+  }
 
-  const renderNavigationItem = (item: NavigationItem, level = 0) => {
-    const isActive = pathname === item.href;
-    const isExpanded = expandedItems.includes(item.name);
-    const hasChildren = item.children && item.children.length > 0;
+  const renderNavigationItem = (item: NavItem, depth = 0) => {
+    const isActive = pathname === item.href
+    const isExpanded = expandedItems.includes(item.name)
+    const hasChildren = item.children && item.children.length > 0
 
     return (
       <div key={item.name}>
         <div
           className={cn(
-            "flex items-center justify-between rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-            level > 0 && "ml-4",
+            "group flex items-center justify-between rounded-none px-3 py-2.5 text-sm font-medium transition-all",
+            `pl-${depth * 4}`, item.badge && "pr-2",
             isActive
-              ? "bg-muted text-foreground font-semibold"
-              : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+              ? "bg-primary text-primary-foreground"
+              : "text-muted-foreground hover:bg-muted hover:text-foreground"
           )}
         >
           <Link
@@ -88,15 +60,21 @@ export function DashboardSidebar({ isOpen, onClose }: SidebarProps) {
             className="flex items-center gap-3 flex-1"
             onClick={!hasChildren ? onClose : undefined}
           >
-            <item.icon className="h-5 w-5" />
-            {item.name}
+            <item.icon className={cn("h-4 w-4", isActive && "text-primary-foreground")} />
+            <span>{item.name}</span>
           </Link>
+
+          {item.badge && (
+            <span className="ml-auto mr-2 rounded-none bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
+              {item.badge}
+            </span>
+          )}
 
           {hasChildren && (
             <Button
               variant="ghost"
               size="sm"
-              className="h-auto p-0"
+              className="h-auto p-0 hover:bg-transparent"
               onClick={() => toggleExpanded(item.name)}
             >
               {isExpanded ? (
@@ -111,31 +89,97 @@ export function DashboardSidebar({ isOpen, onClose }: SidebarProps) {
         {hasChildren && isExpanded && (
           <div className="mt-1 space-y-1">
             {item.children?.map((child) =>
-              renderNavigationItem(child, level + 1)
+              renderNavigationItem(child, depth + 1)
             )}
           </div>
         )}
       </div>
-    );
-  };
+    )
+  }
 
   return (
     <>
       {/* Desktop sidebar */}
-      <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-64 lg:flex-col">
-        <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-background border-r border-border px-6 pb-4">
-          <div className="flex h-16 shrink-0 items-center">
-            <div className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-lg bg-primary/20 flex items-center justify-center">
-                <Link2 className="text-primary w-5 h-5" />
-              </div>
-              <span className="text-xl font-bold text-foreground">Dashboard</span>
-            </div>
+      <div className={cn(
+        "hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:flex-col transition-all duration-300",
+        collapsed ? "lg:w-16" : "lg:w-64"
+      )}>
+        <div className={cn("flex grow flex-col gap-y-5 overflow-y-auto bg-background border-r border-border px-6 pb-4", {
+          "px-0": collapsed
+        })}>
+          {/* Logo & Toggle */}
+          <div className="flex h-16 shrink-0 items-center justify-between">
+            {!collapsed && (
+              <Link href="/dash" className="flex items-center gap-2">
+                <Logo className="h-7 w-auto" />
+              </Link>
+            )}
+            {onToggleCollapse && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={onToggleCollapse}
+                className="rounded-none ml-auto"
+                title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+              >
+                {collapsed ? (
+                  <ChevronsRight className="h-5 w-5" />
+                ) : (
+                  <ChevronsLeft className="h-5 w-5" />
+                )}
+              </Button>
+            )}
           </div>
+
+          {/* Navigation */}
           <nav className="flex flex-1 flex-col">
             <ul role="list" className="flex flex-1 flex-col gap-y-1">
-              {navigation.map((item) => renderNavigationItem(item))}
+              {dashboardNav.map((item) => (
+                <li key={item.name}>
+                  <Link
+                    href={item.href}
+                    className={cn(
+                      "group flex items-center rounded-none text-sm font-medium transition-all",
+                      collapsed ? "justify-center py-3" : "gap-x-3 px-3 py-2.5",
+                      pathname === item.href
+                        ? "bg-primary text-primary-foreground"
+                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                    )}
+                    title={collapsed ? item.name : undefined}
+                  >
+                    <item.icon className="h-5 w-5 shrink-0" />
+                    {!collapsed && <span>{item.name}</span>}
+                  </Link>
+                </li>
+              ))}
             </ul>
+
+            {/* Bottom Section */}
+            {!collapsed && (
+              <div className="mt-auto pt-4 border-t border-border space-y-2">
+                {/* Upgrade Card */}
+                <UpgradeCard />
+
+                {/* Version */}
+                <div className="text-center text-xs text-muted-foreground">
+                  v{siteConfig.version}
+                </div>
+              </div>
+            )}
+
+            {/* Collapsed Upgrade Button */}
+            {collapsed && (
+              <div className="mt-auto pt-4 border-t border-border">
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="w-full h-12 rounded-none hover:bg-primary/10"
+                  title="Upgrade to Pro"
+                >
+                  <Zap className="h-5 w-5 text-primary animate-pulse" />
+                </Button>
+              </div>
+            )}
           </nav>
         </div>
       </div>
@@ -148,29 +192,50 @@ export function DashboardSidebar({ isOpen, onClose }: SidebarProps) {
         )}
       >
         <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-background border-r border-border px-6 pb-4">
+          {/* Header with close button */}
           <div className="flex h-16 shrink-0 items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-lg bg-primary/20 flex items-center justify-center">
-                <Link2 className="text-primary w-5 h-5" />
-              </div>
-              <span className="text-xl font-bold text-foreground">Dashboard</span>
-            </div>
+            <Link href="/dash" className="flex items-center gap-2">
+              <Logo className="h-7 w-auto" />
+            </Link>
             <Button
               variant="ghost"
               size="icon"
               onClick={onClose}
-              className="h-8 w-8"
+              className="h-8 w-8 rounded-none"
             >
               <X className="h-4 w-4" />
             </Button>
           </div>
+
+          {/* Navigation */}
           <nav className="flex flex-1 flex-col">
             <ul role="list" className="flex flex-1 flex-col gap-y-1">
-              {navigation.map((item) => renderNavigationItem(item))}
+              {dashboardNav.map((item) => renderNavigationItem(item))}
             </ul>
+
+            {/* Bottom Section */}
+            <div className="mt-auto pt-4 border-t border-border space-y-2">
+              {/* Upgrade Card */}
+              <UpgradeCard />
+
+              {/* Version */}
+              <div className="text-center text-xs text-muted-foreground">
+                v{siteConfig.version}
+              </div>
+            </div>
           </nav>
-        </div>
-      </div>
+        </div >
+      </div >
+
+      {/* Mobile overlay */}
+      {
+        isOpen && (
+          <div
+            className="fixed inset-0 z-40 bg-background/80 backdrop-blur-sm lg:hidden"
+            onClick={onClose}
+          />
+        )
+      }
     </>
-  );
+  )
 }

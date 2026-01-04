@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 
 import { ColorPalette, colorPalettes, defaultPalette, themes } from "@/config/color-palettes";
 import { siteConfig } from "@/config/site";
+import { getLocalStorage, setLocalStorage } from "@/lib/helper/storage";
 
 type ThemeMode = 'light' | 'dark';
 
@@ -29,8 +30,8 @@ export function ConfigStyleProvider({ children }: { children?: React.ReactNode }
   const [mode, setModeState] = useState<ThemeMode>('dark');
 
   useEffect(() => {
-    const savedPaletteName = localStorage.getItem("theme-palette");
-    const savedMode = localStorage.getItem("theme-mode") as ThemeMode;
+    const savedPaletteName = getLocalStorage<string>("theme-palette");
+    const savedMode = getLocalStorage<ThemeMode>("theme-mode");
 
     if (savedPaletteName && colorPalettes[savedPaletteName]) {
       setPaletteState(colorPalettes[savedPaletteName]);
@@ -51,13 +52,13 @@ export function ConfigStyleProvider({ children }: { children?: React.ReactNode }
   const setPalette = (name: string) => {
     if (colorPalettes[name]) {
       setPaletteState(colorPalettes[name]);
-      localStorage.setItem("theme-palette", name);
+      setLocalStorage("theme-palette", name);
     }
   };
 
   const setMode = (newMode: ThemeMode) => {
     setModeState(newMode);
-    localStorage.setItem("theme-mode", newMode);
+    setLocalStorage("theme-mode", newMode);
     if (newMode === 'dark') {
       document.documentElement.classList.add('dark');
     } else {

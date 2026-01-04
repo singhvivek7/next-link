@@ -12,14 +12,15 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import { Controller,useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 import { handleRegister } from "@/actions/register";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { RegisterSchema,registerSchema } from "@/lib/helper/validation";
+import { getLocalStorage, removeLocalStorage } from "@/lib/helper/storage";
+import { RegisterSchema, registerSchema } from "@/lib/helper/validation";
 
 export default function SignUpPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -41,7 +42,33 @@ export default function SignUpPage() {
 
   const onSubmit = async (data: RegisterSchema) => {
     try {
-      await handleRegister(data);
+      // Get local history if any
+      // Get local history if any
+      const savedHistory = getLocalStorage<any[]>("urlHistory");
+      let historyCodes: string[] = [];
+
+      if (savedHistory && Array.isArray(savedHistory)) {
+        try {
+          // Extract the short code from the full URL (last segment)
+          historyCodes = savedHistory.map((item: any) => {
+            const urlParts = item.shortUrl.split('/');
+            return urlParts[urlParts.length - 1];
+          });
+        } catch (e) {
+          console.error("Failed to parse history for migration", e);
+        }
+      }
+
+      await handleRegister({
+        ...data,
+        history: historyCodes.length > 0 ? historyCodes : undefined
+      });
+
+      // Clear history after successful registration
+      if (historyCodes.length > 0) {
+        removeLocalStorage("urlHistory");
+      }
+
       toast.success("Success!", {
         description: "Registration successful",
       });

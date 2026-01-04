@@ -12,10 +12,5 @@ export default async function AuthLayout({
   if (isAuthenticated) {
     return redirect("/dash");
   }
-  return (
-    <>
-      <header className="h-16 bg-accent">header</header>
-      {children}
-    </>
-  );
+  return children;
 }

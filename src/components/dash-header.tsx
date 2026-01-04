@@ -1,5 +1,9 @@
+"use client";
+
+import { useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 import { handleLogout } from "@/actions/logout";
 import { siteConfig } from "@/config/site";
@@ -7,9 +11,10 @@ import { siteConfig } from "@/config/site";
 import ThemeSelection from "./theme-selection";
 import { Button } from "./ui/button";
 
-
-
 export default function DashHeader() {
+  const queryClient = useQueryClient();
+  const pathname = usePathname();
+
   return (
     <header className="bg-muted">
       <nav className="flex items-center justify-between max-w-7xl mx-auto h-16">
@@ -25,6 +30,7 @@ export default function DashHeader() {
           )}
         </Link>
 
+
         <div className="flex items-center gap-4">
           <ThemeSelection />
           <Button asChild>
@@ -33,7 +39,10 @@ export default function DashHeader() {
           <Button
             variant="destructive"
             className="cursor-pointer"
-            onClick={handleLogout}
+            onClick={async () => {
+              queryClient.clear();
+              await handleLogout(pathname);
+            }}
           >
             Logout
           </Button>

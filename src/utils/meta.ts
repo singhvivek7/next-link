@@ -1,10 +1,11 @@
 import { Metadata } from "next";
 
+import { env } from "@/config/env";
 import { siteConfig } from "@/config/site";
 
 type Page = "homepage" | "about" | "contact" | "privacy" | "terms";
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || siteConfig.url;
+const baseUrl = env.NEXT_PUBLIC_APP_BASE_URL || siteConfig.url;
 const siteName = siteConfig.name;
 const siteDescription = `${siteConfig.description} - Real-time analytics, edge caching, and 99.99% uptime.`;
 

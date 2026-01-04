@@ -5,9 +5,15 @@ import { cookies } from "next/headers";
 
 import { AUTH_COOKIE_NAME } from "@/app/constant/auth.constant";
 import { IJwtPayload } from "@/app/types/auth.type";
+import { env } from "@/config/env";
+
+import { decryptData, encryptData } from "./storage";
+
+const cookieSecret = env.JWT_SECRET || "next-link-cookie-secret";
 
 export const setCookie = async (key: string, value: string) => {
-  (await cookies()).set(key, value);
+  const encryptedValue = encryptData(value, cookieSecret);
+  (await cookies()).set(key, encryptedValue);
 };
 
 export const removeCookie = async (key: string) => {
@@ -17,15 +23,17 @@ export const removeCookie = async (key: string) => {
 export const useAuth = async () => {
   const cookieStore = await cookies();
 
-  const token = cookieStore.get(AUTH_COOKIE_NAME)?.value;
+  const encryptedToken = cookieStore.get(AUTH_COOKIE_NAME)?.value;
 
-  if (!token) {
+  if (!encryptedToken) {
     return {
       isAuthenticated: false,
     };
   }
 
-  if (typeof token !== "string") {
+  const token = decryptData(encryptedToken, cookieSecret);
+
+  if (!token || typeof token !== "string") {
     return {
       isAuthenticated: false,
     };
