@@ -3,7 +3,7 @@ export interface ILink {
     title: string
     description: string
     _count: { clicks: number }
-    click: any[]
+    clicks: any[]
     graph?: {
         date: string
         count: number

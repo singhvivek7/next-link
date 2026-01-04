@@ -300,7 +300,7 @@ export default function LinkDetailsPage() {
                     <div className="bg-card border border-border p-6 rounded-none shadow-sm sticky top-6">
                         <h3 className="text-lg font-semibold mb-4">Recent Clicks</h3>
 
-                        <RecentClicksTable data={link.click || []} />
+                        <RecentClicksTable data={link?.clicks || []} />
                     </div>
                 </div>
             </div>
