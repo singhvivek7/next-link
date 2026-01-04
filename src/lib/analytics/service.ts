@@ -13,8 +13,10 @@ function initializeAnalyticsListener() {
         analyticsEmitter.on(ANALYTICS_EVENTS.TRACK_VIEW, async (payload: TrackViewPayload) => {
             try {
                 console.log(`[Analytics] View tracked for ${payload.shortUrl} IP=${payload.ip || 'unknown'}`);
+                console.log(`[Analytics] Payload:`, JSON.stringify(payload, null, 2));
 
                 // Find the URL first to get its ID
+                console.log(`[Analytics] Looking up URL: ${payload.shortUrl}`);
                 const url = await client.url.findUnique({
                     where: { short_url: payload.shortUrl },
                     select: { id: true }
@@ -25,8 +27,11 @@ function initializeAnalyticsListener() {
                     return;
                 }
 
+                console.log(`[Analytics] Found URL with ID: ${url.id}`);
+
                 // Record the click
-                await client.click.create({
+                console.log(`[Analytics] Creating click record...`);
+                const click = await client.click.create({
                     data: {
                         url_id: url.id,
                         ip_address: payload.ip,
@@ -35,10 +40,15 @@ function initializeAnalyticsListener() {
                     }
                 });
 
-                console.log(`[Analytics] Click recorded successfully for ${payload.shortUrl}`);
+                console.log(`[Analytics] Click recorded successfully for ${payload.shortUrl} with ID: ${click.id}`);
 
             } catch (error) {
                 console.error("[Analytics] Error processing view event:", error);
+                console.error("[Analytics] Error details:", {
+                    message: error instanceof Error ? error.message : 'Unknown error',
+                    stack: error instanceof Error ? error.stack : undefined,
+                    payload
+                });
             }
         });
 

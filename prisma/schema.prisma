@@ -97,6 +97,8 @@ model Url {
   // Indexes for better performance
   @@index([user_id])
   @@index([created_at])
+  @@index([is_active])  // Index for filtering active URLs
+  @@index([expires_at]) // Index for cleanup queries
   @@map("urls")
 }
 
