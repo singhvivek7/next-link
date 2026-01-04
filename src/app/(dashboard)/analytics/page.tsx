@@ -1,3 +1,10 @@
+import { ComingSoon } from "@/components/coming-soon"
+
 export default function AnalyticsPage() {
-  return <main>This is the analytics page</main>;
+  return (
+    <ComingSoon
+      title="Analytics Dashboard"
+      description="Get detailed insights into your link performance with advanced analytics and real-time data visualization."
+    />
+  )
 }

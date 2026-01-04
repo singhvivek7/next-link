@@ -1,8 +1,12 @@
 // utils/asyncHandler.ts
 import { NextRequest, NextResponse } from "next/server";
 
+export interface AsyncParams {
+  params: Promise<any>
+}
+
 // Type for async route handlers
-type AsyncRouteHandler = (req: NextRequest) => Promise<NextResponse>;
+type AsyncRouteHandler = (req: NextRequest, params: AsyncParams) => Promise<NextResponse>;
 
 // Custom error class for API errors
 export class ApiError extends Error {
@@ -37,9 +41,9 @@ export const successResponse = (
 
 // AsyncHandler function
 export const asyncHandler = (fn: AsyncRouteHandler) => {
-  return async (req: NextRequest): Promise<NextResponse> => {
+  return async (req: NextRequest, params: AsyncParams): Promise<NextResponse> => {
     try {
-      return await fn(req);
+      return await fn(req, params);
     } catch (error: any) {
       // Handle custom API errors
       if (error instanceof ApiError) {

@@ -19,12 +19,19 @@ enum Role {
   SUPER_ADMIN
 }
 
+enum PlanType {
+  BASIC
+  PRO
+  CUSTOM
+}
+
 model User {
   id         String   @id @default(auto()) @map("_id") @db.ObjectId
   email      String   @unique
   password   String
   name       String
   role       Role     @default(USER)
+  plan       PlanType @default(BASIC)
   username   String  @unique @default(cuid()) // random string 8 char
   avatar     String?
   created_at DateTime @default(now())
@@ -49,8 +56,9 @@ model Url {
   updated_at   DateTime  @updatedAt
 
   // User relation (optional - for anonymous URLs)
-  user_id String? @db.ObjectId
-  user    User?   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id    String?   @db.ObjectId
+  creator_ip String?   // For anonymous rate limiting
+  user       User?     @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   // Relations
   clicks Click[]
@@ -102,4 +110,20 @@ model Analytics {
   @@index([url_id])
   @@index([date])
   @@map("analytics")
+}
+
+model Plan {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  type        PlanType @unique
+  name        String
+  description String?
+  price       Float    @default(0)
+  currency    String   @default("USD")
+  features    String[]
+  limits      Json?    @default("{ \"urls\": 10, \"clicks\": 1000 }")
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@map("plans")
 }

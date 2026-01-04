@@ -3,14 +3,18 @@
 import {
     Copy,
     Link as LinkIcon,
-    Trash2} from "lucide-react";
-import { AnimatePresence,motion } from "motion/react";
-import { useCallback,useEffect, useState } from "react";
+    Trash2
+} from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { handleShortUrl } from "@/actions/short-url";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useProfile } from "@/hooks/use-profile";
+import { getLocalStorage, setLocalStorage } from "@/lib/helper/storage";
+import { copyToClipboard } from "@/utils/helper";
 
 interface HistoryItem {
     id: string;
@@ -26,13 +30,9 @@ export const UrlShortener = () => {
     const [history, setHistory] = useState<HistoryItem[]>([]);
 
     useEffect(() => {
-        const savedHistory = localStorage.getItem("urlHistory");
+        const savedHistory = getLocalStorage<HistoryItem[]>("urlHistory");
         if (savedHistory) {
-            try {
-                setHistory(JSON.parse(savedHistory));
-            } catch (e) {
-                console.error("Failed to parse history", e);
-            }
+            setHistory(savedHistory);
         }
     }, []);
 
@@ -45,7 +45,7 @@ export const UrlShortener = () => {
         };
         const newHistory = [newItem, ...history].slice(0, 5); // Conserve space
         setHistory(newHistory);
-        localStorage.setItem("urlHistory", JSON.stringify(newHistory));
+        setLocalStorage("urlHistory", newHistory);
     };
 
     const deleteFromHistory = (id: string, e: React.MouseEvent) => {
@@ -56,7 +56,7 @@ export const UrlShortener = () => {
                 onClick: () => {
                     setHistory((current) => {
                         const newHistory = current.filter((item) => item.id !== id);
-                        localStorage.setItem("urlHistory", JSON.stringify(newHistory));
+                        setLocalStorage("urlHistory", newHistory);
                         return newHistory;
                     });
                     toast.success("Entry removed");
@@ -66,9 +66,32 @@ export const UrlShortener = () => {
         });
     };
 
+    const handleCopy = useCallback(async (shortUrl: string) => {
+        await copyToClipboard(shortUrl, {
+            onSuccess: () => toast.success("Copied to clipboard"),
+            onError: () => toast.error("Failed to copy")
+        })
+    }, []);
+
+    const { data: profile } = useProfile({ retry: false });
+
+    // ...
+
     const handleShortenUrl = useCallback(async () => {
         if (!currentUrl) {
             toast.error("Please enter a URL");
+            return;
+        }
+
+        // Check anonymous limit
+        if (!profile?.data && history.length >= 3) {
+            toast.error("You have reached the free limit of 3 links.", {
+                description: "Please login to create more links.",
+                action: {
+                    label: "Login",
+                    onClick: () => window.location.href = "/login"
+                }
+            });
             return;
         }
 
@@ -90,17 +113,9 @@ export const UrlShortener = () => {
             toast.error(err.message || "Error processing request");
         }
         setIsShortening(false);
-    }, [currentUrl, history]);
+    }, [currentUrl, history, profile]);
 
-    const copyToClipboard = useCallback(async (text: string) => {
-        if (!text) return;
-        try {
-            await navigator.clipboard.writeText(text);
-            toast.success("Copied to clipboard");
-        } catch {
-            toast.error("Failed to copy");
-        }
-    }, []);
+
 
     return (
         <div className="w-full">
@@ -155,7 +170,7 @@ export const UrlShortener = () => {
                             </div>
                             <div className="flex gap-2">
                                 <button
-                                    onClick={() => copyToClipboard(shortenedUrl)}
+                                    onClick={() => handleCopy(shortenedUrl)}
                                     className="p-2 border border-border hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
                                 >
                                     <Copy className="w-4 h-4" />
@@ -180,7 +195,7 @@ export const UrlShortener = () => {
                                 <div className="sm:w-[30%] min-w-0">
                                     <div
                                         className="font-mono text-sm truncate cursor-pointer transition-colors group/link"
-                                        onClick={() => copyToClipboard(item.shortUrl)}
+                                        onClick={() => handleCopy(item.shortUrl)}
                                     >
                                         <span className="text-muted-foreground group-hover/link:text-foreground/80 transition-colors">
                                             {item.shortUrl.replace(/^https?:\/\//, "").substring(0, item.shortUrl.replace(/^https?:\/\//, "").lastIndexOf("/") + 1)}
@@ -201,7 +216,7 @@ export const UrlShortener = () => {
                                 {/* Actions - Right */}
                                 <div className="flex items-center justify-end gap-2 sm:w-[20%] opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity">
                                     <button
-                                        onClick={() => copyToClipboard(item.shortUrl)}
+                                        onClick={() => handleCopy(item.shortUrl)}
                                         className="cursor-pointer p-2 border border-border hover:border-foreground/20 text-muted-foreground hover:text-foreground transition-colors"
                                         title="Copy Link"
                                     >

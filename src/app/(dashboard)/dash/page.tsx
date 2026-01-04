@@ -1,3 +1,8 @@
-export default () => {
-  return <main>This is the dashboard page</main>;
+import { ComingSoon } from "@/components/coming-soon"
+
+export default function DashboardPage() {
+  return <ComingSoon
+    title="Dashboard"
+    description="Dashboard page is not available yet."
+  />
 };

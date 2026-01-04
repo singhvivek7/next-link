@@ -25,7 +25,7 @@ function getRandomRecentDate(): Date {
   const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
   return new Date(
     thirtyDaysAgo.getTime() +
-      Math.random() * (now.getTime() - thirtyDaysAgo.getTime())
+    Math.random() * (now.getTime() - thirtyDaysAgo.getTime())
   );
 }
 
@@ -45,6 +45,38 @@ async function main() {
   await prisma.click.deleteMany();
   await prisma.url.deleteMany();
   await prisma.user.deleteMany();
+  await prisma.plan.deleteMany();
+
+  // Create Plans
+  console.log("💎 Creating plans...");
+  await prisma.plan.createMany({
+    data: [
+      {
+        type: "BASIC",
+        name: "Basic Plan",
+        description: "Essential features for individuals",
+        price: 0,
+        limits: { urls: 10, clicks: 1000 },
+        features: ["50 Short Links", "Basic Analytics", "Standard Support"],
+      },
+      {
+        type: "PRO",
+        name: "Pro Plan",
+        description: "Advanced features for power users",
+        price: 9.99,
+        limits: { urls: 500, clicks: 10000 },
+        features: ["500 Short Links", "Advanced Analytics", "Priority Support", "Custom Domains"],
+      },
+      {
+        type: "CUSTOM",
+        name: "Enterprise Plan",
+        description: "Custom solutions for large organizations",
+        price: 49.99,
+        limits: { urls: -1, clicks: -1 }, // -1 for unlimited
+        features: ["Unlimited Links", "Real-time Analytics", "Dedicated Support", "SSO", "SLA"],
+      },
+    ],
+  });
 
   // Create sample users with different roles
   console.log("👥 Creating users...");
@@ -404,8 +436,7 @@ async function main() {
   console.log("📊 Summary:");
   console.log(`   👥 Users: ${users.length}`);
   console.log(
-    `     - Super Admins: ${
-      users.filter((u) => u.role === Role.SUPER_ADMIN).length
+    `     - Super Admins: ${users.filter((u) => u.role === Role.SUPER_ADMIN).length
     }`
   );
   console.log(

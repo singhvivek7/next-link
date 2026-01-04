@@ -1,6 +1,8 @@
+import { headers } from "next/headers";
 import { redirect, RedirectType } from "next/navigation";
 
 import { handleGetShortUrl } from "@/actions/short-url";
+import { trackLinkView } from "@/lib/analytics/service";
 import { generateRedirectLink } from "@/lib/helper/short-url";
 
 export default async function GetUrlPage({
@@ -15,6 +17,21 @@ export default async function GetUrlPage({
     try {
       const { data } = await handleGetShortUrl(url_code);
       redirectLink = generateRedirectLink(data.original_url);
+
+      const headersList = await headers();
+      const ip = headersList.get("x-forwarded-for") || "unknown";
+      const userAgent = headersList.get("user-agent") || "unknown";
+      const referer = headersList.get("referer") || "unknown";
+
+      trackLinkView({
+        shortUrl: url_code,
+        originalUrl: data.original_url,
+        ip,
+        userAgent,
+        referer,
+        timestamp: new Date(),
+      });
+
     } catch (err: any) {
       console.log("Error fetching short url", err);
     }

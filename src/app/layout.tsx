@@ -1,8 +1,13 @@
 import "./globals.css";
 
+import { Suspense } from "react";
+
 import { ConfigStyleProvider } from "@/components/config-style-provider";
+import { GeneralLoader } from "@/components/general-loader";
 import { Toaster } from "@/components/ui/sonner";
+import { env } from "@/config/env";
 import { siteConfig } from "@/config/site";
+import { QueryProvider } from "@/providers/query-provider";
 import { fontPrimary, fontSecondary } from "@/utils/fonts";
 import meta from "@/utils/meta";
 
@@ -18,7 +23,7 @@ export default ({
     '@type': 'WebApplication',
     name: siteConfig.name,
     description: siteConfig.description,
-    url: process.env.NEXT_PUBLIC_BASE_URL || siteConfig.url,
+    url: env.NEXT_PUBLIC_APP_BASE_URL || siteConfig.url,
     applicationCategory: 'BusinessApplication',
     offers: {
       '@type': 'Offer',
@@ -37,8 +42,12 @@ export default ({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
         <ConfigStyleProvider>
-          {children}
-          <Toaster position="bottom-right" richColors />
+          <Suspense fallback={<GeneralLoader />}>
+            <QueryProvider>
+              {children}
+              <Toaster position="bottom-right" richColors />
+            </QueryProvider>
+          </Suspense>
         </ConfigStyleProvider>
       </body>
     </html>
