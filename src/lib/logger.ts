@@ -2,7 +2,7 @@ import pino from 'pino';
 
 // Create logger instance with appropriate configuration
 const logger = pino({
-    level: process.env.LOG_LEVEL || (process.env.NODE_ENV === 'production' ? 'info' : 'debug'),
+    level: process.env.LOG_LEVEL || (process.env.NODE_ENV === 'production' ? 'info' : 'info'),
 
     // Pretty print in development
     transport: process.env.NODE_ENV !== 'production' ? {
