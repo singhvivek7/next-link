@@ -2,7 +2,7 @@ import { headers } from "next/headers";
 import { redirect, RedirectType } from "next/navigation";
 
 import { handleGetShortUrl } from "@/actions/short-url";
-import { trackLinkView } from "@/lib/analytics/service";
+import { trackClick } from "@/lib/analytics/tracker";
 import { generateRedirectLink } from "@/lib/helper/short-url";
 
 export default async function GetUrlPage({
@@ -19,17 +19,17 @@ export default async function GetUrlPage({
       redirectLink = generateRedirectLink(data.original_url);
 
       const headersList = await headers();
-      const ip = headersList.get("x-forwarded-for") || "unknown";
+      const ip = headersList.get("x-forwarded-for") || headersList.get("cf-connecting-ip") || "unknown";
       const userAgent = headersList.get("user-agent") || "unknown";
       const referer = headersList.get("referer") || "unknown";
 
-      trackLinkView({
+      // Track click (fire-and-forget, won't block redirect)
+      trackClick({
         shortUrl: url_code,
         originalUrl: data.original_url,
         ip,
         userAgent,
         referer,
-        timestamp: new Date(),
       });
 
     } catch (err: any) {

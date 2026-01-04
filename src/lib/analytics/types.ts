@@ -1,10 +1,11 @@
-export const ANALYTICS_EVENTS = {
-    TRACK_VIEW: 'TRACK_VIEW',
-} as const;
+/**
+ * Analytics Types
+ * Used by the simplified direct-write tracker
+ */
 
-export interface TrackViewPayload {
+export interface TrackClickPayload {
     shortUrl: string;
-    originalUrl: string;
+    originalUrl?: string;
     ip?: string;
     userAgent?: string;
     referer?: string;
@@ -13,5 +14,18 @@ export interface TrackViewPayload {
     device?: string;
     os?: string;
     browser?: string;
-    timestamp: Date;
+}
+
+export interface ClickRecord {
+    id: string;
+    url_id: string;
+    ip_address?: string;
+    user_agent?: string;
+    referer?: string;
+    country?: string;
+    city?: string;
+    device?: string;
+    browser?: string;
+    os?: string;
+    created_at: Date;
 }
