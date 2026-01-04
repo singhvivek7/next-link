@@ -39,8 +39,39 @@ model User {
 
   // Relations
   urls Url[]
+  transactions Transaction[]
+  plan_expires_at DateTime?
 
   @@map("users")
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+model Transaction {
+  id            String        @id @default(auto()) @map("_id") @db.ObjectId
+  amount        Float
+  currency      String        @default("INR")
+  status        PaymentStatus @default(PENDING)
+  payment_id    String?
+  order_id      String
+  signature     String?
+  created_at    DateTime      @default(now())
+  updated_at    DateTime      @updatedAt
+
+  // User relation
+  user_id       String        @db.ObjectId
+  user          User          @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  // Plan details snapshot
+  plan_type     PlanType
+
+  @@index([user_id])
+  @@index([order_id])
+  @@map("transactions")
 }
 
 model Url {
@@ -118,7 +149,7 @@ model Plan {
   name        String
   description String?
   price       Float    @default(0)
-  currency    String   @default("USD")
+  currency    String   @default("INR")
   features    String[]
   limits      Json?    @default("{ \"urls\": 10, \"clicks\": 1000 }")
   is_active   Boolean  @default(true)

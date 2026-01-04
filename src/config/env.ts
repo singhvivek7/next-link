@@ -1,6 +1,11 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 export const env = {
     DATABASE_URL: process.env.DATABASE_URL || "",
     NEXT_PUBLIC_APP_BASE_URL: process.env.NEXT_PUBLIC_APP_BASE_URL || "",
     JWT_SECRET: process.env.JWT_SECRET || "",
     NEXT_PUBLIC_ENCRYPTION_KEY: process.env.NEXT_PUBLIC_ENCRYPTION_KEY || "NEXT_PUBLIC_ENCRYPTION_KEY",
+    NEXT_PUBLIC_RAZORPAY_KEY_ID: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "",
+    RAZORPAY_KEY_SECRET: process.env.RAZORPAY_KEY_SECRET || ""
 }

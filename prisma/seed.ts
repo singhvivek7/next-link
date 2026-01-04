@@ -63,7 +63,7 @@ async function main() {
         type: "PRO",
         name: "Pro Plan",
         description: "Advanced features for power users",
-        price: 9.99,
+        price: 499,
         limits: { urls: 500, clicks: 10000 },
         features: ["500 Short Links", "Advanced Analytics", "Priority Support", "Custom Domains"],
       },
@@ -71,7 +71,7 @@ async function main() {
         type: "CUSTOM",
         name: "Enterprise Plan",
         description: "Custom solutions for large organizations",
-        price: 49.99,
+        price: 4999,
         limits: { urls: -1, clicks: -1 }, // -1 for unlimited
         features: ["Unlimited Links", "Real-time Analytics", "Dedicated Support", "SSO", "SLA"],
       },

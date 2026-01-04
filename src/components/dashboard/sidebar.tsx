@@ -16,9 +16,11 @@ import { Logo } from "@/components/logo"
 import { Button } from "@/components/ui/button"
 import { dashboardNav, type NavItem } from "@/config/routes"
 import { siteConfig } from "@/config/site"
+import { useProfile } from "@/hooks/use-profile"
 import { cn } from "@/lib/utils"
 
 import { UpgradeCard } from "./upgrade-card"
+import { UpgradeDialog } from "./upgrade-dialog"
 
 interface SidebarProps {
   isOpen: boolean
@@ -30,6 +32,8 @@ interface SidebarProps {
 export function DashboardSidebar({ isOpen, onClose, collapsed = false, onToggleCollapse }: SidebarProps) {
   const pathname = usePathname()
   const [expandedItems, setExpandedItems] = useState<string[]>([])
+  const [upgradeOpen, setUpgradeOpen] = useState(false)
+  const { data: profile } = useProfile()
 
   const toggleExpanded = (itemName: string) => {
     setExpandedItems((prev) =>
@@ -168,13 +172,14 @@ export function DashboardSidebar({ isOpen, onClose, collapsed = false, onToggleC
             )}
 
             {/* Collapsed Upgrade Button */}
-            {collapsed && (
+            {collapsed && profile?.data?.plan === "BASIC" && (
               <div className="mt-auto pt-4 border-t border-border">
                 <Button
                   size="icon"
                   variant="ghost"
                   className="w-full h-12 rounded-none hover:bg-primary/10"
                   title="Upgrade to Pro"
+                  onClick={() => setUpgradeOpen(true)}
                 >
                   <Zap className="h-5 w-5 text-primary animate-pulse" />
                 </Button>
@@ -236,6 +241,15 @@ export function DashboardSidebar({ isOpen, onClose, collapsed = false, onToggleC
           />
         )
       }
+
+      <UpgradeDialog
+        open={upgradeOpen}
+        onOpenChange={setUpgradeOpen}
+        user={{
+          name: profile?.data?.name,
+          email: profile?.data?.email
+        }}
+      />
     </>
   )
 }

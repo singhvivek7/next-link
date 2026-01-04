@@ -33,7 +33,7 @@ export const siteConfig = {
     pricing: [
         {
             name: "Starter",
-            price: "$0",
+            price: "₹0",
             period: "/mo",
             description: "For individuals and hobbyists just getting started.",
             features: ["1,000 links/mo", "Basic analytics", "Community support"],
@@ -42,7 +42,7 @@ export const siteConfig = {
         },
         {
             name: "Pro",
-            price: "$29",
+            price: "₹499",
             period: "/mo",
             description: "For growing teams that need more power and customization.",
             features: ["Unlimited links", "Advanced analytics", "Custom domains (5)", "Team seats (5)", "Priority support"],

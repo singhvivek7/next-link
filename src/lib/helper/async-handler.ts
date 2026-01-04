@@ -110,7 +110,7 @@ export const asyncHandler = (fn: AsyncRouteHandler) => {
       return NextResponse.json(
         {
           status: "error",
-          message: error.message || "Internal server error",
+          message: error.message || error.description || "Internal server error",
         },
         { status: 500 }
       );
