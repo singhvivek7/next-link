@@ -1,7 +1,7 @@
 "use client"
 
 import { useQueryClient } from "@tanstack/react-query";
-import { Bell, LogOut, Menu, Plus, Search, Settings, User } from "lucide-react"
+import { Bell, LogOut, Menu, Plus, Search, Settings, Sparkles, User } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react"
@@ -9,6 +9,7 @@ import { useEffect, useState } from "react"
 import { handleLogout } from "@/actions/logout"
 import { CreateLinkDialog } from "@/components/dashboard/create-link-dialog"
 import { SearchDialog } from "@/components/dashboard/search-dialog"
+import { UpgradeDialog } from "@/components/dashboard/upgrade-dialog"
 import { ThemePicker } from "@/components/theme-picker"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
@@ -33,11 +34,14 @@ interface DashboardHeaderProps {
   }
 }
 
+import { UPGRADE_GRADIENT_STYLES } from "@/lib/constant/ui.constant"
+
 export function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
   const queryClient = useQueryClient();
   const pathname = usePathname();
   const [searchOpen, setSearchOpen] = useState(false)
   const [createLinkOpen, setCreateLinkOpen] = useState(false)
+  const [upgradeOpen, setUpgradeOpen] = useState(false)
   const { data: profile } = useProfile()
 
   const userInitials = profile?.data?.name
@@ -86,6 +90,12 @@ export function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
 
           {/* Right Section */}
           <div className="flex items-center gap-2">
+            {/* Upgrade Button */}
+            <Button size="sm" className={`hidden sm:flex gap-2 rounded-none ${UPGRADE_GRADIENT_STYLES} border-0 hover:opacity-90 transition-opacity`} onClick={() => setUpgradeOpen(true)}>
+              <Sparkles className="h-4 w-4" />
+              <span>Upgrade</span>
+            </Button>
+
             {/* Create New Link Button */}
             <Button size="sm" className="hidden sm:flex gap-2 rounded-none" onClick={() => setCreateLinkOpen(true)}>
               <Plus className="h-4 w-4" />
@@ -208,6 +218,9 @@ export function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
 
       {/* Create Link Dialog */}
       <CreateLinkDialog open={createLinkOpen} onOpenChange={setCreateLinkOpen} />
+
+      {/* Upgrade Dialog */}
+      <UpgradeDialog open={upgradeOpen} onOpenChange={setUpgradeOpen} user={{ name: profile?.data?.name, email: profile?.data?.email }} />
     </>
   )
 }
