@@ -1,7 +1,25 @@
 import client from "@/lib/helper/db";
+import { loggers } from "@/lib/logger";
 
 import { analyticsEmitter } from "./emitter";
 import { ANALYTICS_EVENTS, TrackViewPayload } from "./types";
+
+const logger = loggers.analytics;
+
+// Test database connection
+async function testDatabaseConnection() {
+    try {
+        await client.$connect();
+        logger.info('Database connection successful');
+        return true;
+    } catch (error) {
+        logger.error({ err: error }, 'Database connection failed');
+        return false;
+    }
+}
+
+// Run connection test
+testDatabaseConnection();
 
 // Initialize analytics listener
 function initializeAnalyticsListener() {
@@ -12,11 +30,15 @@ function initializeAnalyticsListener() {
     if (!globalAny[LISTENER_KEY]) {
         analyticsEmitter.on(ANALYTICS_EVENTS.TRACK_VIEW, async (payload: TrackViewPayload) => {
             try {
-                console.log(`[Analytics] View tracked for ${payload.shortUrl} IP=${payload.ip || 'unknown'}`);
-                console.log(`[Analytics] Payload:`, JSON.stringify(payload, null, 2));
+                logger.info({
+                    shortUrl: payload.shortUrl,
+                    ip: payload.ip,
+                    userAgent: payload.userAgent,
+                    referer: payload.referer
+                }, 'View tracked');
 
                 // Find the URL first to get its ID with timeout
-                console.log(`[Analytics] Looking up URL: ${payload.shortUrl}`);
+                logger.debug({ shortUrl: payload.shortUrl }, 'Looking up URL');
 
                 const urlPromise = client.url.findUnique({
                     where: { short_url: payload.shortUrl },
@@ -31,14 +53,14 @@ function initializeAnalyticsListener() {
                 const url = await Promise.race([urlPromise, timeoutPromise]) as { id: string } | null;
 
                 if (!url) {
-                    console.error(`[Analytics] URL not found: ${payload.shortUrl}`);
+                    logger.warn({ shortUrl: payload.shortUrl }, 'URL not found');
                     return;
                 }
 
-                console.log(`[Analytics] Found URL with ID: ${url.id}`);
+                logger.debug({ shortUrl: payload.shortUrl, urlId: url.id }, 'Found URL');
 
                 // Record the click with timeout
-                console.log(`[Analytics] Creating click record...`);
+                logger.debug({ urlId: url.id }, 'Creating click record');
 
                 const clickPromise = client.click.create({
                     data: {
@@ -51,20 +73,23 @@ function initializeAnalyticsListener() {
 
                 const click = await Promise.race([clickPromise, timeoutPromise]) as any;
 
-                console.log(`[Analytics] Click recorded successfully for ${payload.shortUrl} with ID: ${click.id}`);
+                logger.info({
+                    shortUrl: payload.shortUrl,
+                    clickId: click.id,
+                    urlId: url.id
+                }, 'Click recorded successfully');
 
             } catch (error) {
-                console.error("[Analytics] Error processing view event:", error);
-                console.error("[Analytics] Error details:", {
-                    message: error instanceof Error ? error.message : 'Unknown error',
-                    stack: error instanceof Error ? error.stack : undefined,
-                    payload
-                });
+                logger.error({
+                    err: error,
+                    shortUrl: payload.shortUrl,
+                    ip: payload.ip
+                }, 'Error processing view event');
             }
         });
 
         globalAny[LISTENER_KEY] = true;
-        console.log("[Analytics] Listener registered successfully");
+        logger.info('Analytics listener registered');
     }
 }
 
@@ -72,6 +97,6 @@ function initializeAnalyticsListener() {
 initializeAnalyticsListener();
 
 export const trackLinkView = (payload: TrackViewPayload) => {
-    console.log(`[Analytics] Emitting track view event for ${payload.shortUrl}`);
+    logger.debug({ shortUrl: payload.shortUrl }, 'Emitting track view event');
     analyticsEmitter.emit(ANALYTICS_EVENTS.TRACK_VIEW, payload);
 };
