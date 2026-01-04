@@ -7,6 +7,8 @@ import { ANALYTICS_EVENTS } from "@/lib/analytics/types";
 import { throwBadRequest, throwError } from "@/lib/helper/async-handler";
 import client from "@/lib/helper/db";
 
+export const dynamic = "force-dynamic";
+
 type ContextType = {
   params: Promise<{ url: string }>;
 };
